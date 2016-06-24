@@ -1,6 +1,8 @@
 package com.LegoF4.ElytraJetPack.events;
 
 import com.LegoF4.ElytraJetPack.KeyBindings;
+import com.LegoF4.ElytraJetPack.Main;
+import com.LegoF4.ElytraJetPack.capabilties.IJetMode;
 import com.LegoF4.ElytraJetPack.network.KeyPressedMessage;
 import com.LegoF4.ElytraJetPack.network.PacketDispatcher;
 
@@ -39,6 +41,28 @@ public class EventHandlerClient {
 			if (!FMLClientHandler.instance().isGUIOpen(GuiChat.class)) {
 				if (KeyBindings.keyFlyThrust.isKeyDown()) {
 					PacketDispatcher.sendToServer(new KeyPressedMessage(2));
+				}
+				EntityPlayer player = event.player;
+				IJetMode jetMode = player.getCapability(Main.JETMODE_CAP, null);
+				if (jetMode.isJetMode() == 1) {
+					if (Minecraft.getMinecraft().gameSettings.keyBindJump.isPressed()) {
+						PacketDispatcher.sendToServer(new KeyPressedMessage(4));
+					}
+					if (Minecraft.getMinecraft().gameSettings.keyBindSneak.isPressed()) {
+						PacketDispatcher.sendToServer(new KeyPressedMessage(5));
+					}
+					if (Minecraft.getMinecraft().gameSettings.keyBindForward.isPressed()) {
+						PacketDispatcher.sendToServer(new KeyPressedMessage(6));
+					}
+					if (Minecraft.getMinecraft().gameSettings.keyBindBack.isPressed()) {
+						PacketDispatcher.sendToServer(new KeyPressedMessage(7));
+					}
+					if (Minecraft.getMinecraft().gameSettings.keyBindLeft.isPressed()) {
+						PacketDispatcher.sendToServer(new KeyPressedMessage(8));
+					}
+					if (Minecraft.getMinecraft().gameSettings.keyBindRight.isPressed()) {
+						PacketDispatcher.sendToServer(new KeyPressedMessage(9));
+					}
 				}
 			}
 		}

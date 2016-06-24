@@ -188,5 +188,9 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 				}
 			}
 		}
+		IJetMode jetMode = player.getCapability(Main.JETMODE_CAP, null);
+		if (jetMode.isJetMode() == 1) {
+			
+		}
 	}
 }
