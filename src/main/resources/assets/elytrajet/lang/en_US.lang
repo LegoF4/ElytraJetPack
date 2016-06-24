@@ -1,0 +1,13 @@
+﻿< en_US.lang - English localization file for the mod Elytra Like Jetpack>
+item.Jetpack.name=Elytra Jetpack
+
+item.PackTE1.name=Tier 1 Jetpack
+item.PackTE2.name=Tier 2 Jetpack
+item.PackTE3.name=Tier 3 Jetpack
+item.PackTE4.name=Tier 4 Jetpack
+
+key.keyFlyThrust=Thrust on Heading
+key.keyFly=Activate Elytra-like Mode
+key.categories.elytrajet=Elytra Like Jetpack Bindings
+
+itemGroup.ElytraJetPack= Elytra Packs

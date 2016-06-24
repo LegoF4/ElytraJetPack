@@ -1,0 +1,16 @@
+[
+{
+  "modid": "elytajet",
+  "name": "Elytra-Like Jeptack Mod",
+  "description": "Maybe?",
+  "version": "${0.1}",
+  "mcversion": "${1.9.4}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["LegoF4, Kinetus_W"],
+  "credits": "LegoF4 and Kinetus_W",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
