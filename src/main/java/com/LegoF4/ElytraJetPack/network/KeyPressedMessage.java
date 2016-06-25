@@ -172,12 +172,6 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 					}
 				}
 			}
-			/** Particle **/
-			/*
-			
-			double motionPX = vX + rand.nextGaussian() * 0.01D;
-		    double motionPY = vY + rand.nextGaussian() * 0.01D;
-		    double motionPZ = vZ + rand.nextGaussian() * 0.01D;*/
 			
 		}
 		//Fly-toggle
