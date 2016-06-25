@@ -50,8 +50,10 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 		
 	}
 
+ 
 	@Override
 	public void process(EntityPlayer player, Side side) {
+		//Toggle mode
 		if (keyNumb == 1) {
 			ItemStack PlayerStack = player.inventory.armorInventory[2];
 			if (PlayerStack.getItem() instanceof PackArmor) {
@@ -84,6 +86,7 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 				
 			}
 		}
+		//Thrust
 		if (keyNumb == 2) {
 			IJetMode jetMode = player.getCapability(Main.JETMODE_CAP, null);
 			if(!player.isInLava()) {;
@@ -95,12 +98,12 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 					int storedFuel = jetpackFuel.amount;
 					//Thrusting Damage Code
 					
-					if (PlayerStack.getTagCompound().getInteger("Thruster") == 0 && !(storedFuel - 2 <= 0)) {
-						storedFuel -= 2;
+					if (PlayerStack.getTagCompound().getInteger("Thruster") == 0 && !(storedFuel - PlayerStack.getTagCompound().getInteger("FuelUsage")/1.7 <= 0)) {
+						storedFuel -= PlayerStack.getTagCompound().getInteger("FuelUsage")/1.7;
 						PlayerStack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", storedFuel);
 					}
 					int postFuel = PlayerStack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
-					if (postFuel == 0) {
+					if (postFuel  - PlayerStack.getTagCompound().getInteger("FuelUsage")/1.7 <= 0) {
 						
 					}
 					else {
@@ -177,6 +180,7 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 		    double motionPZ = vZ + rand.nextGaussian() * 0.01D;*/
 			
 		}
+		//Fly-toggle
 		if (keyNumb == 3) {
 			IJetFlying jetFlying = player.getCapability(Main.JETFLY_CAP, null);
 			if (player.inventory.armorInventory[2].getItem() instanceof PackArmor) {
@@ -189,8 +193,138 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 			}
 		}
 		IJetMode jetMode = player.getCapability(Main.JETMODE_CAP, null);
+		IJetFlying jetFlying = player.getCapability(Main.JETFLY_CAP, null);
 		if (jetMode.isJetMode() == 1) {
-			
+			//Up
+			if (keyNumb == 4) {
+				ItemStack jetpackStack = player.inventory.armorInventory[2];
+				if (jetpackStack.getItem() instanceof PackArmor) {
+					FluidStack jetpackFuel = FluidStack.loadFluidStackFromNBT(jetpackStack.getTagCompound().getCompoundTag("Fluid"));
+					int storedFuel = jetpackFuel.amount;
+					if (jetpackStack.getTagCompound().getInteger("Thruster") == 0 && !((int) (storedFuel - jetpackStack.getTagCompound().getInteger("FuelUsage")/2)  <= 0)) {
+						storedFuel -= jetpackStack.getTagCompound().getInteger("FuelUsage")/2;
+						jetpackStack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", storedFuel);
+					}
+					int postFuel = jetpackStack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
+					if (postFuel  - jetpackStack.getTagCompound().getInteger("FuelUsage")/2 >= 0) {
+						double motionUp = jetpackStack.getTagCompound().getFloat("Drag")*jetpackStack.getTagCompound().getInteger("Thrust")/(jetpackStack.getTagCompound().getInteger("Weight")*98);
+						player.motionY += motionUp;
+						player.velocityChanged = true;
+						jetFlying.setJetFlying(true);
+					}
+				}
+				
+			}
+			//Down
+			if (keyNumb == 5 && jetFlying.isJetFlying()) {
+				ItemStack jetpackStack = player.inventory.armorInventory[2];
+				if (jetpackStack.getItem() instanceof PackArmor) {
+					FluidStack jetpackFuel = FluidStack.loadFluidStackFromNBT(jetpackStack.getTagCompound().getCompoundTag("Fluid"));
+					int storedFuel = jetpackFuel.amount;
+					if (jetpackStack.getTagCompound().getInteger("Thruster") == 0 && !((int) (storedFuel - jetpackStack.getTagCompound().getInteger("FuelUsage")/3)  <= 0)) {
+						storedFuel -= jetpackStack.getTagCompound().getInteger("FuelUsage")/3;
+						jetpackStack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", storedFuel);
+					}
+					int postFuel = jetpackStack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
+					if (postFuel - jetpackStack.getTagCompound().getInteger("FuelUsage")/3 >= 0) {
+						double motionUp = jetpackStack.getTagCompound().getFloat("Drag")*jetpackStack.getTagCompound().getInteger("Thrust")/(jetpackStack.getTagCompound().getInteger("Weight")*93);
+						player.motionY -= motionUp;
+						player.velocityChanged = true;
+					}
+				}
+			}
+			//Forward
+			if (keyNumb == 6 && jetFlying.isJetFlying()) {
+				ItemStack jetpackStack = player.inventory.armorInventory[2];
+				if (jetpackStack.getItem() instanceof PackArmor) {
+					FluidStack jetpackFuel = FluidStack.loadFluidStackFromNBT(jetpackStack.getTagCompound().getCompoundTag("Fluid"));
+					int storedFuel = jetpackFuel.amount;
+					if (jetpackStack.getTagCompound().getInteger("Thruster") == 0 && !((int) (storedFuel - jetpackStack.getTagCompound().getInteger("FuelUsage")/5)  <= 0)) {
+						storedFuel -= jetpackStack.getTagCompound().getInteger("FuelUsage")/5;
+						jetpackStack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", storedFuel);
+					}
+					int postFuel = jetpackStack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
+					if ((int) (postFuel - jetpackStack.getTagCompound().getInteger("FuelUsage")/5) >= 0) {
+						double yawi = player.rotationYaw;
+						double yaw = Math.toRadians(yawi);
+						double vZ = Math.cos(yaw);
+						double vX = -1*Math.sin(yaw);
+						double r = jetpackStack.getTagCompound().getFloat("Drag")*jetpackStack.getTagCompound().getInteger("Thrust")/(jetpackStack.getTagCompound().getInteger("Weight")*140);
+						player.motionX += vX*r;
+						player.motionZ += vZ*r;
+						player.velocityChanged = true;
+					}
+				}
+			}
+			//Back
+			if (keyNumb == 7 && jetFlying.isJetFlying()) {
+				ItemStack jetpackStack = player.inventory.armorInventory[2];
+				if (jetpackStack.getItem() instanceof PackArmor) {
+					FluidStack jetpackFuel = FluidStack.loadFluidStackFromNBT(jetpackStack.getTagCompound().getCompoundTag("Fluid"));
+					int storedFuel = jetpackFuel.amount;
+					if (jetpackStack.getTagCompound().getInteger("Thruster") == 0 && !((int) (storedFuel - jetpackStack.getTagCompound().getInteger("FuelUsage")/5)  <= 0)) {
+						storedFuel -= jetpackStack.getTagCompound().getInteger("FuelUsage")/5;
+						jetpackStack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", storedFuel);
+					}
+					int postFuel = jetpackStack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
+					if ((int) (postFuel - jetpackStack.getTagCompound().getInteger("FuelUsage")/5) >= 0) {
+						double yawi = player.rotationYaw;
+						double yaw = Math.toRadians(yawi);
+						double vZ = Math.cos(yaw);
+						double vX = -1*Math.sin(yaw);
+						double r = jetpackStack.getTagCompound().getFloat("Drag")*jetpackStack.getTagCompound().getInteger("Thrust")/(jetpackStack.getTagCompound().getInteger("Weight")*140);
+						player.motionX -= vX*r;
+						player.motionZ -= vZ*r;
+						player.velocityChanged = true;
+					}
+				}
+			}
+			//Left
+			if (keyNumb == 8 && jetFlying.isJetFlying()) {
+				ItemStack jetpackStack = player.inventory.armorInventory[2];
+				if (jetpackStack.getItem() instanceof PackArmor) {
+					FluidStack jetpackFuel = FluidStack.loadFluidStackFromNBT(jetpackStack.getTagCompound().getCompoundTag("Fluid"));
+					int storedFuel = jetpackFuel.amount;
+					if (jetpackStack.getTagCompound().getInteger("Thruster") == 0 && !((int) (storedFuel - jetpackStack.getTagCompound().getInteger("FuelUsage")/5)  <= 0)) {
+						storedFuel -= jetpackStack.getTagCompound().getInteger("FuelUsage")/5;
+						jetpackStack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", storedFuel);
+					}
+					int postFuel = jetpackStack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
+					if ((int) (postFuel - jetpackStack.getTagCompound().getInteger("FuelUsage")/5) >= 0) {
+						double yawi = player.rotationYaw - 90;
+						double yaw = Math.toRadians(yawi);
+						double vZ = Math.cos(yaw);
+						double vX = -1*Math.sin(yaw);
+						double r = jetpackStack.getTagCompound().getFloat("Drag")*jetpackStack.getTagCompound().getInteger("Thrust")/(jetpackStack.getTagCompound().getInteger("Weight")*140);
+						player.motionX += vX*r;
+						player.motionZ += vZ*r;
+						player.velocityChanged = true;
+					}
+				}
+			}
+			//Right
+			if (keyNumb == 9 && jetFlying.isJetFlying()) {
+				ItemStack jetpackStack = player.inventory.armorInventory[2];
+				if (jetpackStack.getItem() instanceof PackArmor) {
+					FluidStack jetpackFuel = FluidStack.loadFluidStackFromNBT(jetpackStack.getTagCompound().getCompoundTag("Fluid"));
+					int storedFuel = jetpackFuel.amount;
+					if (jetpackStack.getTagCompound().getInteger("Thruster") == 0 && !((int) (storedFuel - jetpackStack.getTagCompound().getInteger("FuelUsage")/5)  <= 0)) {
+						storedFuel -= jetpackStack.getTagCompound().getInteger("FuelUsage")/5;
+						jetpackStack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", storedFuel);
+					}
+					int postFuel = jetpackStack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
+					if ((int) (postFuel - jetpackStack.getTagCompound().getInteger("FuelUsage")/5) >= 0) {
+						double yawi = player.rotationYaw + 90;
+						double yaw = Math.toRadians(yawi);
+						double vZ = Math.cos(yaw);
+						double vX = -1*Math.sin(yaw);
+						double r = jetpackStack.getTagCompound().getFloat("Drag")*jetpackStack.getTagCompound().getInteger("Thrust")/(jetpackStack.getTagCompound().getInteger("Weight")*140);
+						player.motionX += vX*r;
+						player.motionZ += vZ*r;
+						player.velocityChanged = true;
+					}
+				}
+			}
 		}
 	}
 }

@@ -49,19 +49,31 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem{
 		ItemStack itemStack = new ItemStack(item);
 		FluidStack fluidStack = new FluidStack(FluidRegistry.LAVA, 10000);
 		itemStack.setTagCompound(new NBTTagCompound());
-		
+	
 		NBTTagCompound fluidTag = fluidStack.writeToNBT(new NBTTagCompound());
-		itemStack.getTagCompound().setTag("Fluid", fluidTag);
-		itemStack.getTagCompound().setInteger("Weight", 55);
-		itemStack.getTagCompound().setInteger("Thrust", 400);
-		itemStack.getTagCompound().setFloat("Drag", 0.9F);
-		itemStack.getTagCompound().setInteger("Thruster", 0);
-		itemStack.getTagCompound().setInteger("Tanks", 1);
-		itemStack.getTagCompound().setInteger("CapFluid", 20000);
-		itemStack.getTagCompound().setInteger("Batteries", 1);
-		itemStack.getTagCompound().setInteger("CapBatteries", 100000);
+
 		itemStack.getTagCompound().setInteger("Tier", Character.getNumericValue(itemStack.getUnlocalizedName().charAt(6)));
 		itemStack.getTagCompound().setInteger("Modules", itemStack.getTagCompound().getInteger("Tier") == 1 ? 0 : itemStack.getTagCompound().getInteger("Tier"));
+		itemStack.getTagCompound().setTag("Fluid", fluidTag);
+		itemStack.getTagCompound().setInteger("Weight", 55);
+		itemStack.getTagCompound().setInteger("Thrust", 330);
+		itemStack.getTagCompound().setFloat("Drag", 0.9F);
+		itemStack.getTagCompound().setInteger("Thruster", 0);
+		//Fluids
+		itemStack.getTagCompound().setInteger("Tanks", 1);
+		itemStack.getTagCompound().setInteger("CapFluid", 20000);
+		itemStack.getTagCompound().setInteger("FluidIO", 512);
+		ArrayList<Integer> fuelValues = new ArrayList();
+		fuelValues.add(11);
+		fuelValues.add(1);
+		fuelValues.add(5);
+		int fuelUsage = fuelValues.get(itemStack.getTagCompound().getInteger("Thruster"));
+		fuelUsage *= itemStack.getTagCompound().getInteger("Thrust");
+		fuelUsage = (int) fuelUsage/130;
+		itemStack.getTagCompound().setInteger("FuelUsage", fuelUsage);
+		//Energy
+		itemStack.getTagCompound().setInteger("Batteries", 1);
+		itemStack.getTagCompound().setInteger("CapBatteries", 100000);
 		itemList.add(itemStack);
 	}
 	
@@ -75,7 +87,7 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem{
 		names.add("Jetpack");
 		names.add("Elytrapack");
 		tooltip.add("Mode: " + names.get(jetMode.isJetMode()));
-		tooltip.add("Fuel: " + NumberFormat.getIntegerInstance().format(fluidStack.amount) + "/" + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("Tanks")*stack.getTagCompound().getInteger("CapFluid")) + " mL " + fluidStack.getLocalizedName());
+		tooltip.add("Fuel: " + NumberFormat.getIntegerInstance().format(fluidStack.amount) + "/" + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("Tanks")*stack.getTagCompound().getInteger("CapFluid")) + " mB " + fluidStack.getLocalizedName());
         tooltip.add("Stored Charge: " + "300,000/300,000 RF");
         if(GuiScreen.isShiftKeyDown()){
         	ArrayList<String> thrusters = new ArrayList();
@@ -86,6 +98,7 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem{
         	tooltip.add("Jetpack weight is: " + stack.getTagCompound().getInteger("Weight") + "kg");
         	tooltip.add("Jetpack thurst is: " + stack.getTagCompound().getInteger("Thrust") + " Newtons");
         	tooltip.add("Jetpack drag factor is: " + stack.getTagCompound().getFloat("Drag"));
+        	tooltip.add("Jetpack fuel usage is: " + Integer.toString(stack.getTagCompound().getInteger("FuelUsage")) + " mB/t");
       	}
         else {
       	  tooltip.add(TextFormatting.BLUE + "<Press SHIFT for more>");
@@ -94,21 +107,33 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem{
 	
 	
 	 public void onCreated(ItemStack itemStack, World world, EntityPlayer player) {
-		FluidStack fluidStack = new FluidStack(FluidRegistry.LAVA, 10000);
+		FluidStack fluidStack = new FluidStack(FluidRegistry.LAVA, 20000);
 		itemStack.setTagCompound(new NBTTagCompound());
 	
 		NBTTagCompound fluidTag = fluidStack.writeToNBT(new NBTTagCompound());
+
+		itemStack.getTagCompound().setInteger("Tier", Character.getNumericValue(itemStack.getUnlocalizedName().charAt(6)));
+		itemStack.getTagCompound().setInteger("Modules", itemStack.getTagCompound().getInteger("Tier") == 1 ? 0 : itemStack.getTagCompound().getInteger("Tier"));
 		itemStack.getTagCompound().setTag("Fluid", fluidTag);
 		itemStack.getTagCompound().setInteger("Weight", 55);
 		itemStack.getTagCompound().setInteger("Thrust", 330);
 		itemStack.getTagCompound().setFloat("Drag", 0.9F);
 		itemStack.getTagCompound().setInteger("Thruster", 0);
+		//Fluids
 		itemStack.getTagCompound().setInteger("Tanks", 1);
 		itemStack.getTagCompound().setInteger("CapFluid", 20000);
+		itemStack.getTagCompound().setInteger("FluidIO", 512);
+		ArrayList<Integer> fuelValues = new ArrayList();
+		fuelValues.add(11);
+		fuelValues.add(1);
+		fuelValues.add(5);
+		int fuelUsage = fuelValues.get(itemStack.getTagCompound().getInteger("Thruster"));
+		fuelUsage *= itemStack.getTagCompound().getInteger("Thrust");
+		fuelUsage = (int) fuelUsage/130;
+		itemStack.getTagCompound().setInteger("FuelUsage", fuelUsage);
+		//Energy
 		itemStack.getTagCompound().setInteger("Batteries", 1);
 		itemStack.getTagCompound().setInteger("CapBatteries", 100000);
-		itemStack.getTagCompound().setInteger("Tier", Character.getNumericValue(itemStack.getUnlocalizedName().charAt(6)));
-		itemStack.getTagCompound().setInteger("Modules", itemStack.getTagCompound().getInteger("Tier") == 1 ? 0 : itemStack.getTagCompound().getInteger("Tier"));
 		
 	 }
 	@Override

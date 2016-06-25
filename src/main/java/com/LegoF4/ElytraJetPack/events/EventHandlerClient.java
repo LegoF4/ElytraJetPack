@@ -45,22 +45,22 @@ public class EventHandlerClient {
 				EntityPlayer player = event.player;
 				IJetMode jetMode = player.getCapability(Main.JETMODE_CAP, null);
 				if (jetMode.isJetMode() == 1) {
-					if (Minecraft.getMinecraft().gameSettings.keyBindJump.isPressed()) {
+					if (Minecraft.getMinecraft().gameSettings.keyBindJump.isKeyDown()) {
 						PacketDispatcher.sendToServer(new KeyPressedMessage(4));
 					}
-					if (Minecraft.getMinecraft().gameSettings.keyBindSneak.isPressed()) {
+					if (Minecraft.getMinecraft().gameSettings.keyBindSneak.isKeyDown()) {
 						PacketDispatcher.sendToServer(new KeyPressedMessage(5));
 					}
-					if (Minecraft.getMinecraft().gameSettings.keyBindForward.isPressed()) {
+					if (Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown()) {
 						PacketDispatcher.sendToServer(new KeyPressedMessage(6));
 					}
-					if (Minecraft.getMinecraft().gameSettings.keyBindBack.isPressed()) {
+					if (Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown()) {
 						PacketDispatcher.sendToServer(new KeyPressedMessage(7));
 					}
-					if (Minecraft.getMinecraft().gameSettings.keyBindLeft.isPressed()) {
+					if (Minecraft.getMinecraft().gameSettings.keyBindLeft.isKeyDown()) {
 						PacketDispatcher.sendToServer(new KeyPressedMessage(8));
 					}
-					if (Minecraft.getMinecraft().gameSettings.keyBindRight.isPressed()) {
+					if (Minecraft.getMinecraft().gameSettings.keyBindRight.isKeyDown()) {
 						PacketDispatcher.sendToServer(new KeyPressedMessage(9));
 					}
 				}

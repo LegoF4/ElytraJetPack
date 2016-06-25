@@ -20,8 +20,8 @@ public class CapSyncMessage extends AbstractClientMessage<CapSyncMessage>{
 	
 	public CapSyncMessage() {}
 	
-	public CapSyncMessage(int msgType) {
-		this.intMode = msgType;
+	public CapSyncMessage(int intMode) {
+		this.intMode = intMode;
 	}
 	
 	@Override

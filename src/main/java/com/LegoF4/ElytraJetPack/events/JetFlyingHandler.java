@@ -28,7 +28,7 @@ public class JetFlyingHandler {
 			IJetFlying jetFlying = player.getCapability(Main.JETFLY_CAP, null);
 			IJetMode jetMode = player.getCapability(Main.JETMODE_CAP, null);
 			
-			if (jetMode.isJetMode() == 2) {
+			if (jetMode.isJetMode() >= 0) {
 				if (player.onGround && event.side == Side.SERVER) {
 					jetFlying.setJetFlying(false);
 		           }
