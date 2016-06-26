@@ -7,6 +7,7 @@ import java.util.List;
 import com.LegoF4.ElytraJetPack.Main;
 import com.LegoF4.ElytraJetPack.capabilties.IJetMode;
 
+import cofh.api.energy.IEnergyContainerItem;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -27,7 +28,7 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class PackArmor extends ItemArmor implements IFluidContainerItem{
+public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergyContainerItem{
 	
 	
 	public PackArmor(String unlocalizedName, ArmorMaterial material, int renderIndex, EntityEquipmentSlot armorType) {
@@ -47,7 +48,7 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem{
 	@SideOnly(Side.CLIENT)
     public void getSubItems(Item item, CreativeTabs tab, List itemList) {
 		ItemStack itemStack = new ItemStack(item);
-		FluidStack fluidStack = new FluidStack(FluidRegistry.LAVA, 10000);
+		FluidStack fluidStack = new FluidStack(FluidRegistry.LAVA, 20000);
 		itemStack.setTagCompound(new NBTTagCompound());
 	
 		NBTTagCompound fluidTag = fluidStack.writeToNBT(new NBTTagCompound());
@@ -74,6 +75,18 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem{
 		//Energy
 		itemStack.getTagCompound().setInteger("Batteries", 1);
 		itemStack.getTagCompound().setInteger("CapBatteries", 100000);
+		itemStack.getTagCompound().setInteger("BatteryIO", 512);
+		itemStack.getTagCompound().setInteger("CapEnergy", itemStack.getTagCompound().getInteger("Batteries")*itemStack.getTagCompound().getInteger("CapBatteries"));
+		itemStack.getTagCompound().setInteger("EnergyIO", itemStack.getTagCompound().getInteger("Batteries")*itemStack.getTagCompound().getInteger("BatteryIO"));
+		itemStack.getTagCompound().setInteger("EnergyStored", itemStack.getTagCompound().getInteger("CapEnergy"));
+		ArrayList<Integer> energyValues = new ArrayList();
+		energyValues.add(1);
+		energyValues.add(8);
+		energyValues.add(5);
+		int energyUsage = fuelValues.get(itemStack.getTagCompound().getInteger("Thruster"));
+		energyUsage *= itemStack.getTagCompound().getInteger("Thrust");
+		energyUsage = (int) energyUsage/104;
+		itemStack.getTagCompound().setInteger("EnergyUsage", energyUsage);
 		itemList.add(itemStack);
 	}
 	
@@ -87,8 +100,13 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem{
 		names.add("Jetpack");
 		names.add("Elytrapack");
 		tooltip.add("Mode: " + names.get(jetMode.isJetMode()));
-		tooltip.add("Fuel: " + NumberFormat.getIntegerInstance().format(fluidStack.amount) + "/" + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("Tanks")*stack.getTagCompound().getInteger("CapFluid")) + " mB " + fluidStack.getLocalizedName());
-        tooltip.add("Stored Charge: " + "300,000/300,000 RF");
+		if (fluidStack != null) {
+			tooltip.add("Fuel: " + NumberFormat.getIntegerInstance().format(fluidStack.amount) + "/" + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("CapFluid")) + " mB " + fluidStack.getLocalizedName());
+		}
+		else {
+			tooltip.add("Fuel: 0/" + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("CapFluid")) + "mb of Fluid");
+		}
+        tooltip.add("Stored Charge: " + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("EnergyStored")) + "/" + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("CapEnergy")) +" RF");
         if(GuiScreen.isShiftKeyDown()){
         	ArrayList<String> thrusters = new ArrayList();
         	thrusters.add("Chemical");
@@ -99,6 +117,7 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem{
         	tooltip.add("Jetpack thurst is: " + stack.getTagCompound().getInteger("Thrust") + " Newtons");
         	tooltip.add("Jetpack drag factor is: " + stack.getTagCompound().getFloat("Drag"));
         	tooltip.add("Jetpack fuel usage is: " + Integer.toString(stack.getTagCompound().getInteger("FuelUsage")) + " mB/t");
+        	tooltip.add("Jetpack energy usage is: " + Integer.toString(stack.getTagCompound().getInteger("EnergyUsage")) + " RF/t");
       	}
         else {
       	  tooltip.add(TextFormatting.BLUE + "<Press SHIFT for more>");
@@ -134,6 +153,18 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem{
 		//Energy
 		itemStack.getTagCompound().setInteger("Batteries", 1);
 		itemStack.getTagCompound().setInteger("CapBatteries", 100000);
+		itemStack.getTagCompound().setInteger("BatteryIO", 512);
+		itemStack.getTagCompound().setInteger("CapEnergy", itemStack.getTagCompound().getInteger("Batteries")*itemStack.getTagCompound().getInteger("CapBatteries"));
+		itemStack.getTagCompound().setInteger("EnergyIO", itemStack.getTagCompound().getInteger("Batteries")*itemStack.getTagCompound().getInteger("BatteryIO"));
+		itemStack.getTagCompound().setInteger("EnergyStored", 0);
+		ArrayList<Integer> energyValues = new ArrayList();
+		energyValues.add(1);
+		energyValues.add(8);
+		energyValues.add(5);
+		int energyUsage = fuelValues.get(itemStack.getTagCompound().getInteger("Thruster"));
+		energyUsage *= itemStack.getTagCompound().getInteger("Thrust");
+		energyUsage = (int) energyUsage/104;
+		itemStack.getTagCompound().setInteger("EnergyUsage", energyUsage);
 		
 	 }
 	@Override
@@ -212,5 +243,53 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem{
 	@SideOnly(Side.SERVER)
 	public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
 		
+	}
+	@Override
+	public int receiveEnergy(ItemStack container, int maxReceive, boolean simulate) {
+		// TODO Auto-generated method stub
+		if (container.getItem() instanceof PackArmor) {
+			int energyStored = this.getEnergyStored(container);
+			int energyReceived = Math.min(this.getMaxEnergyStored(container) - energyStored, Math.min(maxReceive, container.getTagCompound().getInteger("EnergyIO")));
+			if (!simulate) {
+				energyStored += energyReceived;
+				container.getTagCompound().setInteger("EnergyStored", energyStored);
+			}
+			return energyReceived;
+		}
+		return 0;
+	}
+	@Override
+	public int extractEnergy(ItemStack container, int maxExtract, boolean simulate) {
+		// TODO Auto-generated method stub
+		if (container.getItem() instanceof PackArmor) {
+			int energyStored = this.getEnergyStored(container);
+	        int energyExtracted = Math.min(energyStored, Math.min(maxExtract, container.getTagCompound().getInteger("EnergyIO")));
+	        if (!simulate) {
+	        	energyStored -= energyExtracted;
+	        	container.getTagCompound().setInteger("EneryStored", energyStored);
+	        }
+			return energyExtracted;
+		}
+		return 0;
+	}
+	@Override
+	public int getEnergyStored(ItemStack container) {
+		// TODO Auto-generated method stub
+		if (container.getItem() instanceof PackArmor) {
+			return container.getTagCompound().getInteger("EnergyStored");
+		}
+		else {
+			return 0;
+		}
+	}
+	@Override
+	public int getMaxEnergyStored(ItemStack container) {
+		// TODO Auto-generated method stub
+		if (container.getItem() instanceof PackArmor) {
+			return container.getTagCompound().getInteger("CapEnergy");
+		}
+		else {
+			return 0;
+		}
 	}
 }
