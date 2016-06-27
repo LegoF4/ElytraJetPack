@@ -10,7 +10,7 @@ import net.minecraftforge.common.util.EnumHelper;
 
 public final class ItemManager {
 	
-	public static ArmorMaterial MTE1 = EnumHelper.addArmorMaterial("MTE1", "elytrajet:te1", 0, new int[] {0, 0, 2, 0}, 0, null, 0);
+	public static ArmorMaterial MTE1 = EnumHelper.addArmorMaterial("MTE1", "elytrajet:te1", 0, new int[] {0, 0, 3, 0}, 0, null, 0);
 	public static ArmorMaterial MTE2 = EnumHelper.addArmorMaterial("MTE2", "elytrajet:te2", 0, new int[] {0, 0, 5, 0}, 0, null, 0);
 	public static ArmorMaterial MTE3 = EnumHelper.addArmorMaterial("MTE3", "elytrajet:te3", 0, new int[] {0, 0, 7, 0}, 0, null, 0);
 	public static ArmorMaterial MTE4 = EnumHelper.addArmorMaterial("MTE4", "elytrajet:te4", 0, new int[] {0, 0, 9, 0}, 0, null, 0);

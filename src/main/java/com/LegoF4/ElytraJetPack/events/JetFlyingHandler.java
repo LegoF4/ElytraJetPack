@@ -37,13 +37,11 @@ public class JetFlyingHandler {
 				if (player.motionY > -1.0F) {
 					player.fallDistance = 1.0F;
 				}
-				if (player.isCollidedHorizontally && jetMode.isJetMode() == 2)
-                {
+				if (player.isCollidedHorizontally && jetMode.isJetMode() == 2) {
                     double d1 = Math.sqrt(player.motionX * player.motionX + player.motionZ * player.motionZ);
                     float f1 = (float)(d1 * 10.0D - 3.0D);
 
-                    if (f1 > 0.0F)
-                    {
+                    if (f1 > 0.0F) {
                         player.attackEntityFrom(DamageSource.flyIntoWall, f1);
                     }
                 }
