@@ -2,8 +2,8 @@ package com.LegoF4.ElytraJetPack.events;
 
 import com.LegoF4.ElytraJetPack.KeyBindings;
 import com.LegoF4.ElytraJetPack.Main;
-import com.LegoF4.ElytraJetPack.Items.PackArmor;
 import com.LegoF4.ElytraJetPack.capabilties.IJetMode;
+import com.LegoF4.ElytraJetPack.items.PackArmor;
 import com.LegoF4.ElytraJetPack.network.KeyPressedMessage;
 import com.LegoF4.ElytraJetPack.network.PacketDispatcher;
 
@@ -33,6 +33,9 @@ public class EventHandlerClient {
 			}
 			if (Minecraft.getMinecraft().gameSettings.keyBindJump.isPressed()) {
 				PacketDispatcher.sendToServer(new KeyPressedMessage(3));
+			}
+			if (KeyBindings.keyFlyHover.isPressed()) {
+				PacketDispatcher.sendToServer(new KeyPressedMessage(10));
 			}
 		}
     }

@@ -3,11 +3,12 @@ package com.LegoF4.ElytraJetPack.events;
 import java.util.UUID;
 
 import com.LegoF4.ElytraJetPack.Main;
-import com.LegoF4.ElytraJetPack.Items.ItemManager;
-import com.LegoF4.ElytraJetPack.Items.PackArmor;
 import com.LegoF4.ElytraJetPack.capabilties.IJetFlying;
+import com.LegoF4.ElytraJetPack.capabilties.IJetHover;
 import com.LegoF4.ElytraJetPack.capabilties.IJetMode;
 import com.LegoF4.ElytraJetPack.capabilties.IJetTicks;
+import com.LegoF4.ElytraJetPack.items.ItemManager;
+import com.LegoF4.ElytraJetPack.items.PackArmor;
 import com.LegoF4.ElytraJetPack.network.CapSyncMessageBool;
 import com.LegoF4.ElytraJetPack.network.CapSyncMessageInt2;
 import com.LegoF4.ElytraJetPack.network.PacketDispatcher;
@@ -19,6 +20,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -36,6 +38,7 @@ public class JetFlyingHandler {
 			IJetFlying jetFlying = player.getCapability(Main.JETFLY_CAP, null);
 			IJetMode jetMode = player.getCapability(Main.JETMODE_CAP, null);
 			IJetTicks jetTicks = player.getCapability(Main.JETTICKS_CAP, null);
+			IJetHover jetHover = player.getCapability(Main.JETHOVER_CAP, null);
 			UUID playerUUID = player.getUniqueID();
 			long mostBits = playerUUID.getMostSignificantBits();
 			long leastBits = playerUUID.getLeastSignificantBits();
@@ -68,7 +71,27 @@ public class JetFlyingHandler {
 		                    }
 		                }
 					}
-					
+					if (jetMode.isJetMode() != 2 && jetHover.isJetHovering() == true) {
+						if (jetpackStack.getTagCompound().getInteger("Avionics") > 1) {
+							FluidStack jetpackFuel = FluidStack.loadFluidStackFromNBT(jetpackStack.getTagCompound().getCompoundTag("Fluid"));
+							int storedFuel = jetpackFuel.amount;
+							int storedCharge = jetpackStack.getTagCompound().getInteger("EnergyStored");
+							if (!(storedCharge -jetpackStack.getTagCompound().getInteger("EnergyUsage")/2 <= 0) && !(storedFuel -jetpackStack.getTagCompound().getInteger("FuelUsage")/2 <= 0)) {
+								storedFuel -= (int) jetpackStack.getTagCompound().getInteger("FuelUsage")/2;
+								storedCharge -= (int) jetpackStack.getTagCompound().getInteger("EnergyUsage")/2;
+								jetpackStack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", storedFuel);
+								jetpackStack.getTagCompound().setInteger("EnergyStored", storedCharge);
+							}
+							int postFuel = jetpackStack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
+							int postCharge = jetpackStack.getTagCompound().getInteger("EnergyStored");
+							if (postFuel  - jetpackStack.getTagCompound().getInteger("FuelUsage")/2 >= 0 && postCharge  - jetpackStack.getTagCompound().getInteger("EnergyUsage")/2 >= 0) {
+								player.motionY += 0.023F + (jetpackStack.getTagCompound().getInteger("Avionics")*0.001*2);
+								player.motionY *= 0.4;
+								player.motionX *= 0.5 + (jetpackStack.getTagCompound().getInteger("Avionics")*0.05);
+								player.motionZ *= 0.5 + (jetpackStack.getTagCompound().getInteger("Avionics")*0.05);
+							}
+						}
+					}
 					if (jetMode.isJetMode() == 2) {
 						if (jetFlying.isJetFlying()==true) {
 							jetTicks.setJetTicks(jetTicks.getJetTicks()+1);

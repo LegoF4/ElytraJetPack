@@ -1,11 +1,12 @@
 package com.LegoF4.ElytraJetPack;
 
-import com.LegoF4.ElytraJetPack.Items.ItemManager;
-import com.LegoF4.ElytraJetPack.Items.PackArmor;
 import com.LegoF4.ElytraJetPack.capabilties.IJetFlying;
+import com.LegoF4.ElytraJetPack.capabilties.IJetHover;
 import com.LegoF4.ElytraJetPack.capabilties.IJetMode;
 import com.LegoF4.ElytraJetPack.capabilties.IJetTicks;
 import com.LegoF4.ElytraJetPack.client.render.items.ItemRenderRegister;
+import com.LegoF4.ElytraJetPack.items.ItemManager;
+import com.LegoF4.ElytraJetPack.items.PackArmor;
 import com.LegoF4.ElytraJetPack.network.PacketDispatcher;
 
 import org.apache.logging.log4j.LogManager;
@@ -39,13 +40,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class Main {
 	public static final String MODID = "elytrajet";
 	public static final String MODNAME = "Elytra Like Jetpacks";
-	public static final String VERSION = "0.1";
+	public static final String VERSION = "0.1.0";
+	
 	@CapabilityInject(IJetFlying.class)
     public static final Capability<IJetFlying> JETFLY_CAP = null;
 	@CapabilityInject(IJetMode.class)
     public static final Capability<IJetMode> JETMODE_CAP = null;
 	@CapabilityInject(IJetTicks.class)
     public static final Capability<IJetTicks> JETTICKS_CAP = null;
+	@CapabilityInject(IJetHover.class)
+    public static final Capability<IJetHover> JETHOVER_CAP = null;
+	
 	public static final Logger logger = LogManager.getLogger(MODID);
 
 	@Instance

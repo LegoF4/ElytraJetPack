@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.LegoF4.ElytraJetPack.Main;
 import com.LegoF4.ElytraJetPack.capabilties.IJetFlying;
+import com.LegoF4.ElytraJetPack.capabilties.IJetHover;
 import com.LegoF4.ElytraJetPack.capabilties.IJetMode;
 import com.LegoF4.ElytraJetPack.capabilties.IJetTicks;
 
@@ -136,6 +137,29 @@ public class EventHandlerCommon {
 		            @Override
 		            public void deserializeNBT(NBTPrimitive nbt) {
 		            	Main.JETTICKS_CAP.getStorage().readNBT(Main.JETTICKS_CAP, instance, null, nbt);
+		            }
+		        });
+			 event.addCapability(new ResourceLocation(Main.MODID, "IJetHover"), new ICapabilitySerializable<NBTPrimitive>()
+		        {
+		            IJetHover instance = Main.JETHOVER_CAP.getDefaultInstance();
+		            @Override
+		            public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		                return capability == Main.JETHOVER_CAP;
+		            }
+
+		            @Override
+		            public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		                return capability == Main.JETHOVER_CAP ? Main.JETHOVER_CAP.<T>cast(instance) : null;
+		            }
+
+		            @Override
+		            public NBTPrimitive serializeNBT() {
+		                return (NBTPrimitive)Main.JETHOVER_CAP.getStorage().writeNBT(Main.JETHOVER_CAP, instance, null);
+		            }
+
+		            @Override
+		            public void deserializeNBT(NBTPrimitive nbt) {
+		            	Main.JETHOVER_CAP.getStorage().readNBT(Main.JETHOVER_CAP, instance, null, nbt);
 		            }
 		        });
 		}

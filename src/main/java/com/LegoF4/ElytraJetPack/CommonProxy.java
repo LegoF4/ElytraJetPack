@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.UUID;
 
 import com.LegoF4.ElytraJetPack.capabilties.IJetFlying;
+import com.LegoF4.ElytraJetPack.capabilties.IJetHover;
 import com.LegoF4.ElytraJetPack.capabilties.IJetMode;
 import com.LegoF4.ElytraJetPack.capabilties.IJetTicks;
 import com.LegoF4.ElytraJetPack.capabilties.JetFlyingDefaultImpl;
 import com.LegoF4.ElytraJetPack.capabilties.JetFlyingStorage;
+import com.LegoF4.ElytraJetPack.capabilties.JetHoverDefaultImpl;
+import com.LegoF4.ElytraJetPack.capabilties.JetHoverStorage;
 import com.LegoF4.ElytraJetPack.capabilties.JetModeDefaultImpl;
 import com.LegoF4.ElytraJetPack.capabilties.JetModeStorage;
 import com.LegoF4.ElytraJetPack.capabilties.JetTicksDefaultImpl;
@@ -69,6 +72,7 @@ public class CommonProxy{
 		CapabilityManager.INSTANCE.register(IJetFlying.class, new JetFlyingStorage(), JetFlyingDefaultImpl.class);
 		CapabilityManager.INSTANCE.register(IJetMode.class, new JetModeStorage(), JetModeDefaultImpl.class);
 		CapabilityManager.INSTANCE.register(IJetTicks.class, new JetTicksStorage(), JetTicksDefaultImpl.class);
+		CapabilityManager.INSTANCE.register(IJetHover.class, new JetHoverStorage(), JetHoverDefaultImpl.class);
     }
 
     public void init(FMLInitializationEvent e) {

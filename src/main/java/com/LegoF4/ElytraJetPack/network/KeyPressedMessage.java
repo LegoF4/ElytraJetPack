@@ -8,10 +8,11 @@ import java.util.UUID;
 
 import com.LegoF4.ElytraJetPack.CommonProxy;
 import com.LegoF4.ElytraJetPack.Main;
-import com.LegoF4.ElytraJetPack.Items.ItemManager;
-import com.LegoF4.ElytraJetPack.Items.PackArmor;
 import com.LegoF4.ElytraJetPack.capabilties.IJetFlying;
+import com.LegoF4.ElytraJetPack.capabilties.IJetHover;
 import com.LegoF4.ElytraJetPack.capabilties.IJetMode;
+import com.LegoF4.ElytraJetPack.items.ItemManager;
+import com.LegoF4.ElytraJetPack.items.PackArmor;
 import com.LegoF4.ElytraJetPack.network.AbstractMessage.AbstractServerMessage;
 
 import net.minecraft.client.Minecraft;
@@ -55,9 +56,6 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 	@Override
 	public void process(EntityPlayer player, Side side) {
 		ItemStack jetpackStack = player.inventory.armorInventory[2];
-		if (keyNumb == 1) {
-			System.out.println("Limb Swing Amount: " + player.limbSwingAmount);
-		}
 		if (jetpackStack != null) {
 			if (jetpackStack.getItem() instanceof PackArmor) {
 				IJetMode jetMode = player.getCapability(Main.JETMODE_CAP, null);
@@ -103,15 +101,15 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 							FluidStack jetpackFuel = FluidStack.loadFluidStackFromNBT(jetpackStack.getTagCompound().getCompoundTag("Fluid"));
 							int storedFuel = jetpackFuel.amount;
 							int storedCharge = jetpackStack.getTagCompound().getInteger("EnergyStored");
-							if (!(storedCharge -jetpackStack.getTagCompound().getInteger("EnergyUsage")/1.7 <= 0) && !(storedFuel -jetpackStack.getTagCompound().getInteger("FuelUsage")/1.7 <= 0)) {
-								storedFuel -= (int) jetpackStack.getTagCompound().getInteger("FuelUsage")/1.7;
-								storedCharge -= (int) jetpackStack.getTagCompound().getInteger("EnergyUsage")/1.7;
+							if (!(storedCharge -jetpackStack.getTagCompound().getInteger("EnergyUsage")/1.3 <= 0) && !(storedFuel -jetpackStack.getTagCompound().getInteger("FuelUsage")/1.3 <= 0)) {
+								storedFuel -= (int) jetpackStack.getTagCompound().getInteger("FuelUsage")/1.3;
+								storedCharge -= (int) jetpackStack.getTagCompound().getInteger("EnergyUsage")/1.3;
 								jetpackStack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", storedFuel);
 								jetpackStack.getTagCompound().setInteger("EnergyStored", storedCharge);
 							}
 							int postFuel = jetpackStack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
 							int postCharge = jetpackStack.getTagCompound().getInteger("EnergyStored");
-							if (postFuel  - jetpackStack.getTagCompound().getInteger("FuelUsage")/1.7 < 0 || postFuel  - jetpackStack.getTagCompound().getInteger("EnergyUsage")/1.7 < 0) {
+							if (postFuel  - jetpackStack.getTagCompound().getInteger("FuelUsage")/1.3 < 0 || postFuel  - jetpackStack.getTagCompound().getInteger("EnergyUsage")/1.3 < 0) {
 								
 							}
 							else {
@@ -327,6 +325,13 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 								player.velocityChanged = true;
 							}
 					}
+				}
+				if (keyNumb == 10) {
+					IJetHover jetHover = player.getCapability(Main.JETHOVER_CAP, null);
+					jetHover.setJetHovering(!jetHover.isJetHovering());
+					PacketDispatcher.sendToAll(new CapSyncMessageBool2(jetHover.isJetHovering(), mostBits, leastBits));
+					String stringHover = TextFormatting.RED + (jetHover.isJetHovering() == true ? "Enabled" : "Disabled");
+					player.addChatComponentMessage(new TextComponentString(TextFormatting.BOLD + ("Jetpack Mode is:  " + stringHover) ));
 				}
 			}	
 		}

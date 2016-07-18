@@ -1,7 +1,7 @@
 package com.LegoF4.ElytraJetPack.client.render.items;
 
 import com.LegoF4.ElytraJetPack.Main;
-import com.LegoF4.ElytraJetPack.Items.ItemManager;
+import com.LegoF4.ElytraJetPack.items.ItemManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

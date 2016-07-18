@@ -1,10 +1,11 @@
-package com.LegoF4.ElytraJetPack.Items;
+package com.LegoF4.ElytraJetPack.items;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.LegoF4.ElytraJetPack.Main;
+import com.LegoF4.ElytraJetPack.capabilties.IJetHover;
 import com.LegoF4.ElytraJetPack.capabilties.IJetMode;
 
 import cofh.api.energy.IEnergyContainerItem;
@@ -86,7 +87,7 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 		energyValues.add(5);
 		int energyUsage = fuelValues.get(itemStack.getTagCompound().getInteger("Thruster"));
 		energyUsage *= itemStack.getTagCompound().getInteger("Thrust");
-		energyUsage = (int) energyUsage/104;
+		energyUsage = (int) energyUsage/124;
 		itemStack.getTagCompound().setInteger("EnergyUsage", energyUsage);
 		//Armor
 		itemStack.getTagCompound().setInteger("Plates", 1);
@@ -95,8 +96,8 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 		int iarmor = itemStack.getTagCompound().getInteger("Tier")*2;
 		iarmor += 1;
 		itemStack.getTagCompound().setInteger("ArmorReduction", iarmor);
-		itemStack.getTagCompound().setBoolean("Hover", false);
 		itemList.add(itemStack);
+		itemStack.getTagCompound().setInteger("Avionics", 1);
 	}
 	
 	@Override
@@ -116,7 +117,8 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 			tooltip.add("Fuel: 0/" + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("CapFluid")) + "mb of Fluid");
 		}
         tooltip.add("Stored Charge: " + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("EnergyStored")) + "/" + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("CapEnergy")) +" RF");
-        tooltip.add("Hover: " + (stack.getTagCompound().getBoolean("Hover") == true ? "Enabled" : "Disabled"));
+        IJetHover jetHover = player.getCapability(Main.JETHOVER_CAP, null);
+        tooltip.add("Hover: " + (jetHover.isJetHovering() == true ? "Enabled" : "Disabled"));
         if(GuiScreen.isShiftKeyDown()){
         	ArrayList<String> thrusters = new ArrayList();
         	thrusters.add("Chemical");
@@ -183,7 +185,7 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 		int iarmor = itemStack.getTagCompound().getInteger("Tier")*2;
 		iarmor += 1;
 		itemStack.getTagCompound().setInteger("ArmorReduction", iarmor);
-		itemStack.getTagCompound().setBoolean("Hover", false);
+		itemStack.getTagCompound().setInteger("Avionics", 1);
 		
 	 }
 	@Override

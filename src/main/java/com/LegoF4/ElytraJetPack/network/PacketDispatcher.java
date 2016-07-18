@@ -32,6 +32,7 @@ public class PacketDispatcher
 		registerMessage(CapSyncMessageInt.class);
 		registerMessage(CapSyncMessageInt2.class);
 		registerMessage(CapSyncMessageBool.class);
+		registerMessage(CapSyncMessageBool2.class);
 
 		// Packets handled on SERVER
 		registerMessage(OpenGuiMessage.class);

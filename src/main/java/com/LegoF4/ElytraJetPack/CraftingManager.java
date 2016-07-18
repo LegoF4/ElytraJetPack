@@ -1,6 +1,6 @@
 package com.LegoF4.ElytraJetPack;
 
-import com.LegoF4.ElytraJetPack.Items.ItemManager;
+import com.LegoF4.ElytraJetPack.items.ItemManager;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
