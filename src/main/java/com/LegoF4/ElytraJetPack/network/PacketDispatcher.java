@@ -29,7 +29,9 @@ public class PacketDispatcher
 	 */
 	public static final void registerPackets() {
 		// Packets handled on CLIENT
-		registerMessage(CapSyncMessage.class);
+		registerMessage(CapSyncMessageInt.class);
+		registerMessage(CapSyncMessageInt2.class);
+		registerMessage(CapSyncMessageBool.class);
 
 		// Packets handled on SERVER
 		registerMessage(OpenGuiMessage.class);

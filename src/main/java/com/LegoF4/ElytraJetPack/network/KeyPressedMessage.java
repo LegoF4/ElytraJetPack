@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import com.LegoF4.ElytraJetPack.CommonProxy;
 import com.LegoF4.ElytraJetPack.Main;
@@ -54,10 +55,16 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 	@Override
 	public void process(EntityPlayer player, Side side) {
 		ItemStack jetpackStack = player.inventory.armorInventory[2];
+		if (keyNumb == 1) {
+			System.out.println("Limb Swing Amount: " + player.limbSwingAmount);
+		}
 		if (jetpackStack != null) {
 			if (jetpackStack.getItem() instanceof PackArmor) {
 				IJetMode jetMode = player.getCapability(Main.JETMODE_CAP, null);
 				IJetFlying jetFlying = player.getCapability(Main.JETFLY_CAP, null);
+				UUID playerUUID = player.getUniqueID();
+				long mostBits = playerUUID.getMostSignificantBits();
+				long leastBits = playerUUID.getLeastSignificantBits();
 				//Toggle mode
 				if (keyNumb == 1) {		
 						int intMode = jetMode.isJetMode();
@@ -68,25 +75,28 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 						int int1 = 1;
 						int int2 = 2;
 						if(intMode == 0) {
+							player.eyeHeight = 1.62f;
 							stringMode = TextFormatting.GOLD + "Disabled";
 							player.addChatComponentMessage(new TextComponentString(TextFormatting.BOLD + ("Jetpack Mode is:  " + stringMode) ));
 						}
 						if(intMode == 1) {
+							player.eyeHeight = 1.62f;
 							stringMode = TextFormatting.GOLD + "Jetpack";
 							player.addChatComponentMessage(new TextComponentString(TextFormatting.BOLD + ("Jetpack Mode is:  " + stringMode) ));
 						}
 						if(intMode == 2) {
+							player.eyeHeight = 1.62f;
 							stringMode = TextFormatting.GOLD + "Elytrapack";
 							player.addChatComponentMessage(new TextComponentString(TextFormatting.BOLD + ("Jetpack Mode is:  " + stringMode) ));
 						}
 						if (player instanceof EntityPlayerMP) {
 							EntityPlayerMP playerMP = (EntityPlayerMP) player;
-							PacketDispatcher.sendTo(new CapSyncMessage(intMode), playerMP);
+							PacketDispatcher.sendTo(new CapSyncMessageInt(intMode, mostBits, leastBits), playerMP);
 							
 						}
 				}
 				//Thrust
-				if (keyNumb == 2) {
+				if (keyNumb == 2 && jetFlying.isJetFlying()) {
 					if(!player.isInLava()) {;
 						if(jetMode.isJetMode() == 2) {
 							Item jetpackItem = jetpackStack.getItem();
@@ -176,6 +186,7 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 						if (!player.isInLava()) {
 							if(player.fallDistance > 0 && jetMode.isJetMode() > 0) {
 								jetFlying.setJetFlying(true);
+								PacketDispatcher.sendToAll(new CapSyncMessageBool(jetFlying.isJetFlying(), mostBits, leastBits));
 							}
 						}
 				}
@@ -198,6 +209,7 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 								player.motionY += motionUp;
 								player.velocityChanged = true;
 								jetFlying.setJetFlying(true);
+								PacketDispatcher.sendToAll(new CapSyncMessageBool(jetFlying.isJetFlying(), mostBits, leastBits));
 							}
 					}
 					//Down

@@ -7,7 +7,8 @@ item.PackTE3.name=Tier 3 Jetpack
 item.PackTE4.name=Tier 4 Jetpack
 
 key.keyFlyThrust=Thrust on Heading
-key.keyFly=Activate Elytra-like Mode
+key.keyFly=Toggle Mode
+key.keyFlyHover=Toggle Jetpack Hover
 key.categories.elytrajet=Elytra Like Jetpack Bindings
 
 itemGroup.ElytraJetPack= Elytra Packs

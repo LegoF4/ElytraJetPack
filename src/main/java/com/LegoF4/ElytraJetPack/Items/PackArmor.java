@@ -48,7 +48,7 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 	@SideOnly(Side.CLIENT)
     public void getSubItems(Item item, CreativeTabs tab, List itemList) {
 		ItemStack itemStack = new ItemStack(item);
-		FluidStack fluidStack = new FluidStack(FluidRegistry.LAVA, 20000);
+		FluidStack fluidStack = new FluidStack(FluidRegistry.LAVA, 60000);
 		itemStack.setTagCompound(new NBTTagCompound());
 	
 		NBTTagCompound fluidTag = fluidStack.writeToNBT(new NBTTagCompound());
@@ -61,11 +61,12 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 		itemStack.getTagCompound().setFloat("Drag", 0.9F);
 		itemStack.getTagCompound().setInteger("Thruster", 0);
 		//Fluids
-		itemStack.getTagCompound().setInteger("Tanks", 1);
-		itemStack.getTagCompound().setInteger("CapFluid", 20000);
+		itemStack.getTagCompound().setInteger("Tanks", 3);
+		itemStack.getTagCompound().setInteger("CapTanks", 20000);
+		itemStack.getTagCompound().setInteger("CapFluid", itemStack.getTagCompound().getInteger("Tanks")*itemStack.getTagCompound().getInteger("CapTanks"));
 		itemStack.getTagCompound().setInteger("FluidIO", 512);
 		ArrayList<Integer> fuelValues = new ArrayList();
-		fuelValues.add(11);
+		fuelValues.add(11); 
 		fuelValues.add(1);
 		fuelValues.add(5);
 		int fuelUsage = fuelValues.get(itemStack.getTagCompound().getInteger("Thruster"));
@@ -73,7 +74,7 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 		fuelUsage = (int) fuelUsage/130;
 		itemStack.getTagCompound().setInteger("FuelUsage", fuelUsage);
 		//Energy
-		itemStack.getTagCompound().setInteger("Batteries", 1);
+		itemStack.getTagCompound().setInteger("Batteries", 2);
 		itemStack.getTagCompound().setInteger("CapBatteries", 100000);
 		itemStack.getTagCompound().setInteger("BatteryIO", 512);
 		itemStack.getTagCompound().setInteger("CapEnergy", itemStack.getTagCompound().getInteger("Batteries")*itemStack.getTagCompound().getInteger("CapBatteries"));
@@ -87,6 +88,14 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 		energyUsage *= itemStack.getTagCompound().getInteger("Thrust");
 		energyUsage = (int) energyUsage/104;
 		itemStack.getTagCompound().setInteger("EnergyUsage", energyUsage);
+		//Armor
+		itemStack.getTagCompound().setInteger("Plates", 1);
+		itemStack.getTagCompound().setInteger("ArmorType", 0);
+		itemStack.getTagCompound().setInteger("ArmorEnergyUsage", 100);
+		int iarmor = itemStack.getTagCompound().getInteger("Tier")*2;
+		iarmor += 1;
+		itemStack.getTagCompound().setInteger("ArmorReduction", iarmor);
+		itemStack.getTagCompound().setBoolean("Hover", false);
 		itemList.add(itemStack);
 	}
 	
@@ -107,17 +116,18 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 			tooltip.add("Fuel: 0/" + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("CapFluid")) + "mb of Fluid");
 		}
         tooltip.add("Stored Charge: " + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("EnergyStored")) + "/" + NumberFormat.getIntegerInstance().format(stack.getTagCompound().getInteger("CapEnergy")) +" RF");
+        tooltip.add("Hover: " + (stack.getTagCompound().getBoolean("Hover") == true ? "Enabled" : "Disabled"));
         if(GuiScreen.isShiftKeyDown()){
         	ArrayList<String> thrusters = new ArrayList();
         	thrusters.add("Chemical");
         	thrusters.add("Ion");
         	thrusters.add("Plasma");
         	tooltip.add("Engines: " + "Tier " + "1" + " " + thrusters.get(stack.getTagCompound().getInteger("Thruster")) + " Thrusters");
-        	tooltip.add("Jetpack weight is: " + stack.getTagCompound().getInteger("Weight") + "kg");
-        	tooltip.add("Jetpack thurst is: " + stack.getTagCompound().getInteger("Thrust") + " Newtons");
-        	tooltip.add("Jetpack drag factor is: " + stack.getTagCompound().getFloat("Drag"));
-        	tooltip.add("Jetpack fuel usage is: " + Integer.toString(stack.getTagCompound().getInteger("FuelUsage")) + " mB/t");
-        	tooltip.add("Jetpack energy usage is: " + Integer.toString(stack.getTagCompound().getInteger("EnergyUsage")) + " RF/t");
+        	tooltip.add("Weight: " + stack.getTagCompound().getInteger("Weight") + "kg");
+        	tooltip.add("Thrust: " + stack.getTagCompound().getInteger("Thrust") + " Newtons");
+        	tooltip.add("Drag Factor: " + stack.getTagCompound().getFloat("Drag"));
+        	tooltip.add("Fuel Usage: " + Integer.toString(stack.getTagCompound().getInteger("FuelUsage")) + " mB/t");
+        	tooltip.add("Energy Usage: " + Integer.toString(stack.getTagCompound().getInteger("EnergyUsage")) + " RF/t");
       	}
         else {
       	  tooltip.add(TextFormatting.BLUE + "<Press SHIFT for more>");
@@ -126,7 +136,7 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 	
 	
 	 public void onCreated(ItemStack itemStack, World world, EntityPlayer player) {
-		FluidStack fluidStack = new FluidStack(FluidRegistry.LAVA, 20000);
+		FluidStack fluidStack = new FluidStack(FluidRegistry.LAVA, 60000);
 		itemStack.setTagCompound(new NBTTagCompound());
 	
 		NBTTagCompound fluidTag = fluidStack.writeToNBT(new NBTTagCompound());
@@ -140,7 +150,8 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 		itemStack.getTagCompound().setInteger("Thruster", 0);
 		//Fluids
 		itemStack.getTagCompound().setInteger("Tanks", 1);
-		itemStack.getTagCompound().setInteger("CapFluid", 20000);
+		itemStack.getTagCompound().setInteger("CapTanks", 20000);
+		itemStack.getTagCompound().setInteger("CapFluid", itemStack.getTagCompound().getInteger("Tanks")*itemStack.getTagCompound().getInteger("CapTanks"));
 		itemStack.getTagCompound().setInteger("FluidIO", 512);
 		ArrayList<Integer> fuelValues = new ArrayList();
 		fuelValues.add(11);
@@ -165,6 +176,14 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 		energyUsage *= itemStack.getTagCompound().getInteger("Thrust");
 		energyUsage = (int) energyUsage/104;
 		itemStack.getTagCompound().setInteger("EnergyUsage", energyUsage);
+		//Armor
+		itemStack.getTagCompound().setInteger("Plates", 1);
+		itemStack.getTagCompound().setInteger("ArmorType", 0);
+		itemStack.getTagCompound().setInteger("ArmorEnergyUsage", 100);
+		int iarmor = itemStack.getTagCompound().getInteger("Tier")*2;
+		iarmor += 1;
+		itemStack.getTagCompound().setInteger("ArmorReduction", iarmor);
+		itemStack.getTagCompound().setBoolean("Hover", false);
 		
 	 }
 	@Override
@@ -292,4 +311,37 @@ public class PackArmor extends ItemArmor implements IFluidContainerItem, IEnergy
 			return 0;
 		}
 	}
+	/*@Override
+	public ArmorProperties getProperties(EntityLivingBase player, ItemStack armor, DamageSource source, double damage,
+			int slot) {
+		// TODO Auto-generated method stub
+		if (player instanceof EntityPlayer && armor.getItem() instanceof PackArmor) {
+			int energyPerDamage = armor.getTagCompound().getInteger("ArmorEnergyUsage");
+            int maxAbsorbed = energyPerDamage > 0 ? 25 * (armor.getTagCompound().getInteger("EnergyStored") / energyPerDamage) : 0;
+            return new ArmorProperties(0, 0.85D * (armor.getTagCompound().getInteger("ArmorReduction") / 20.0D), maxAbsorbed);
+		}
+		return new ArmorProperties(0, 1, 0);
+	}
+	@Override
+	public int getArmorDisplay(EntityPlayer player, ItemStack armor, int slot) {
+		if (armor.getItem() instanceof PackArmor) {
+			int iarmor = armor.getTagCompound().getInteger("Tier")*2;
+			iarmor += 1;
+			return iarmor;
+		}
+		else {
+			return 0;
+		}
+	}
+	@Override
+	public void damageArmor(EntityLivingBase entity, ItemStack stack, DamageSource source, int damage, int slot) {
+		// TODO Auto-generated method stub
+		if (entity instanceof EntityPlayer && stack.getItem() instanceof PackArmor) {
+			int energyStored = stack.getTagCompound().getInteger("EnergyStored");
+			int energyCost = stack.getTagCompound().getInteger("ArmorEnergyUsage");
+			energyCost *= damage;
+			energyStored -= energyCost;
+			stack.getTagCompound().setInteger("EnergyStored", energyStored);
+		}
+	}*/
 }
