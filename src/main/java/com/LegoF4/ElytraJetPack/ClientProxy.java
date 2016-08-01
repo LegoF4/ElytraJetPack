@@ -1,5 +1,6 @@
 package com.LegoF4.ElytraJetPack;
 
+import com.LegoF4.ElytraJetPack.client.render.blocks.BlockRenderRegister;
 import com.LegoF4.ElytraJetPack.client.render.items.ItemRenderRegister;
 import com.LegoF4.ElytraJetPack.client.render.player.ElytraRender;
 import com.LegoF4.ElytraJetPack.events.EventHandlerClient;
@@ -25,9 +26,11 @@ public class ClientProxy extends CommonProxy {
 		EventHandlerClient handler = new EventHandlerClient();
     	MinecraftForge.EVENT_BUS.register(handler);
     	FMLCommonHandler.instance().bus().register(handler);
-	    ItemRenderRegister.registerItemRenderer();
 	    ElytraRender handler2 = new ElytraRender();
 	    MinecraftForge.EVENT_BUS.register(handler2);
+	    
+	    ItemRenderRegister.registerItemRenderer();
+	    BlockRenderRegister.registerBlockRenderer();
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.LegoF4.ElytraJetPack;
 import java.util.List;
 import java.util.UUID;
 
+import com.LegoF4.ElytraJetPack.blocks.ArmorTableTileEntity;
 import com.LegoF4.ElytraJetPack.capabilties.IJetFlying;
 import com.LegoF4.ElytraJetPack.capabilties.IJetHover;
 import com.LegoF4.ElytraJetPack.capabilties.IJetMode;
@@ -17,6 +18,7 @@ import com.LegoF4.ElytraJetPack.capabilties.JetTicksDefaultImpl;
 import com.LegoF4.ElytraJetPack.capabilties.JetTicksStorage;
 import com.LegoF4.ElytraJetPack.events.EventHandlerCommon;
 import com.LegoF4.ElytraJetPack.events.JetFlyingHandler;
+import com.LegoF4.ElytraJetPack.gui.GuiHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,6 +32,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -73,6 +76,9 @@ public class CommonProxy{
 		CapabilityManager.INSTANCE.register(IJetMode.class, new JetModeStorage(), JetModeDefaultImpl.class);
 		CapabilityManager.INSTANCE.register(IJetTicks.class, new JetTicksStorage(), JetTicksDefaultImpl.class);
 		CapabilityManager.INSTANCE.register(IJetHover.class, new JetHoverStorage(), JetHoverDefaultImpl.class);
+		
+		//Machines
+		ArmorTableTileEntity.init();
     }
 
     public void init(FMLInitializationEvent e) {
@@ -83,6 +89,7 @@ public class CommonProxy{
     	MinecraftForge.EVENT_BUS.register(handler2);
     	FMLCommonHandler.instance().bus().register(handler2);
     	CraftingManager.Crafting();
+    	NetworkRegistry.INSTANCE.registerGuiHandler(Main.instance, new GuiHandler());
     }
 
     public void postInit(FMLPostInitializationEvent e) {

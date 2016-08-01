@@ -71,24 +71,26 @@ public class JetFlyingHandler {
 		                    }
 		                }
 					}
-					if (jetMode.isJetMode() != 2 && jetHover.isJetHovering() == true) {
+					if (jetMode.isJetMode() == 1 && jetHover.isJetHovering() == true) {
 						if (jetpackStack.getTagCompound().getInteger("Avionics") > 1) {
-							FluidStack jetpackFuel = FluidStack.loadFluidStackFromNBT(jetpackStack.getTagCompound().getCompoundTag("Fluid"));
-							int storedFuel = jetpackFuel.amount;
-							int storedCharge = jetpackStack.getTagCompound().getInteger("EnergyStored");
-							if (!(storedCharge -jetpackStack.getTagCompound().getInteger("EnergyUsage")/2 <= 0) && !(storedFuel -jetpackStack.getTagCompound().getInteger("FuelUsage")/2 <= 0)) {
-								storedFuel -= (int) jetpackStack.getTagCompound().getInteger("FuelUsage")/2;
-								storedCharge -= (int) jetpackStack.getTagCompound().getInteger("EnergyUsage")/2;
-								jetpackStack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", storedFuel);
-								jetpackStack.getTagCompound().setInteger("EnergyStored", storedCharge);
-							}
-							int postFuel = jetpackStack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
-							int postCharge = jetpackStack.getTagCompound().getInteger("EnergyStored");
-							if (postFuel  - jetpackStack.getTagCompound().getInteger("FuelUsage")/2 >= 0 && postCharge  - jetpackStack.getTagCompound().getInteger("EnergyUsage")/2 >= 0) {
-								player.motionY += 0.023F + (jetpackStack.getTagCompound().getInteger("Avionics")*0.001*2);
-								player.motionY *= 0.4;
-								player.motionX *= 0.5 + (jetpackStack.getTagCompound().getInteger("Avionics")*0.05);
-								player.motionZ *= 0.5 + (jetpackStack.getTagCompound().getInteger("Avionics")*0.05);
+							if (!player.onGround) {
+								FluidStack jetpackFuel = FluidStack.loadFluidStackFromNBT(jetpackStack.getTagCompound().getCompoundTag("Fluid"));
+								int storedFuel = jetpackFuel.amount;
+								int storedCharge = jetpackStack.getTagCompound().getInteger("EnergyStored");
+								if (!(storedCharge -jetpackStack.getTagCompound().getInteger("EnergyUsage")/2 <= 0) && !(storedFuel -jetpackStack.getTagCompound().getInteger("FuelUsage")/2 <= 0)) {
+									storedFuel -= (int) jetpackStack.getTagCompound().getInteger("FuelUsage")/2;
+									storedCharge -= (int) jetpackStack.getTagCompound().getInteger("EnergyUsage")/2;
+									jetpackStack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", storedFuel);
+									jetpackStack.getTagCompound().setInteger("EnergyStored", storedCharge);
+								}
+								int postFuel = jetpackStack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
+								int postCharge = jetpackStack.getTagCompound().getInteger("EnergyStored");
+								if (postFuel  - jetpackStack.getTagCompound().getInteger("FuelUsage")/2 >= 0 && postCharge  - jetpackStack.getTagCompound().getInteger("EnergyUsage")/2 >= 0) {
+									player.motionY += 0.023F + (jetpackStack.getTagCompound().getInteger("Avionics")*0.001*2);
+									player.motionY *= 0.4;
+									player.motionX *= 0.5 + (jetpackStack.getTagCompound().getInteger("Avionics")*0.05);
+									player.motionZ *= 0.5 + (jetpackStack.getTagCompound().getInteger("Avionics")*0.05);
+								}
 							}
 						}
 					}
@@ -135,7 +137,7 @@ public class JetFlyingHandler {
 					        if (Math.sqrt(player.motionX * player.motionX + player.motionY * player.motionY + player.motionZ * player.motionZ) < 1.0F) {
 					        	
 					        }
-					        float drag = (1 - jetpackStack.getTagCompound().getFloat("Drag")) / 8;
+					        float drag = (1 - jetpackStack.getTagCompound().getFloat("Drag")) / 6;
 					        player.motionX *= 0.9900000095367432D - drag;
 					        player.motionY *= 0.9800000190734863D - drag/1.2;
 					        player.motionZ *= 0.9900000095367432D - drag;

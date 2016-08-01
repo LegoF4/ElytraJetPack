@@ -6,6 +6,10 @@ item.PackTE2.name=Tier 2 Jetpack
 item.PackTE3.name=Tier 3 Jetpack
 item.PackTE4.name=Tier 4 Jetpack
 
+tile.armorTable.name=Armor Assembly Table
+
+container.armorTable= Armor Assembly Table
+
 key.keyFlyThrust=Thrust on Heading
 key.keyFly=Toggle Mode
 key.keyFlyHover=Toggle Jetpack Hover

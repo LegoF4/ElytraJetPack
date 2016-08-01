@@ -331,7 +331,7 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 					jetHover.setJetHovering(!jetHover.isJetHovering());
 					PacketDispatcher.sendToAll(new CapSyncMessageBool2(jetHover.isJetHovering(), mostBits, leastBits));
 					String stringHover = TextFormatting.RED + (jetHover.isJetHovering() == true ? "Enabled" : "Disabled");
-					player.addChatComponentMessage(new TextComponentString(TextFormatting.BOLD + ("Jetpack Mode is:  " + stringHover) ));
+					player.addChatComponentMessage(new TextComponentString(TextFormatting.BOLD + ("Hovering " + stringHover) ));
 				}
 			}	
 		}

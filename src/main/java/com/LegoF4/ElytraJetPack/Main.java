@@ -1,5 +1,6 @@
 package com.LegoF4.ElytraJetPack;
 
+import com.LegoF4.ElytraJetPack.blocks.BlockManager;
 import com.LegoF4.ElytraJetPack.capabilties.IJetFlying;
 import com.LegoF4.ElytraJetPack.capabilties.IJetHover;
 import com.LegoF4.ElytraJetPack.capabilties.IJetMode;
@@ -64,8 +65,10 @@ public class Main {
 		logger.info("Beginning pre-initialization");
 		this.proxy.preInit(e);
 		ItemManager.createItems();
+		BlockManager.createBlocks();
 		KeyBindings.init();
 		PacketDispatcher.registerPackets();
+		
 	}
 	        
 	@EventHandler
