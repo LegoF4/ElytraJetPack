@@ -1,10 +1,26 @@
 ﻿< en_US.lang - English localization file for the mod Elytra Like Jetpack>
 item.Jetpack.name=Elytra Jetpack
 
-item.PackTE1.name=Tier 1 Jetpack
-item.PackTE2.name=Tier 2 Jetpack
-item.PackTE3.name=Tier 3 Jetpack
-item.PackTE4.name=Tier 4 Jetpack
+item.PackTE1.name=Elytra Jetpack
+
+item.JCore1.name=Jetpack Base Mark 1
+item.JCore2.name=Jetpack Base Mark 2
+item.JCore3.name=Jetpack Base Mark 3
+item.JCore4.name=Jetpack Base Mark 4
+
+item.JAv1.name=Jetpack Avionics Mark 1
+item.JAv2.name=Jetpack Avionics Mark 2
+item.JAv3.name=Jetpack Avionics Mark 3
+item.JAv4.name=Jetpack Avionics Mark 4
+
+item.JEngineC.name=Chemical Thruster
+item.JEngineI.name=Ion Thruster
+item.JEngineP.name=Plasma Thruster
+item.JEngineG.name=Gravitational Thruster
+
+item.JTank1.name=Basic Fluid Tank
+item.JTank2.name=Compressed Fluid Tank
+item.JTank3.name=Extra-Dimensional Active Compression Device
 
 tile.armorTable.name=Armor Assembly Table
 

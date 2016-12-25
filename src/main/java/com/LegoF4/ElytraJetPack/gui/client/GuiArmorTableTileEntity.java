@@ -4,6 +4,7 @@ import com.LegoF4.ElytraJetPack.Main;
 import com.LegoF4.ElytraJetPack.blocks.ArmorTableTileEntity;
 import com.LegoF4.ElytraJetPack.gui.ContainerArmorTableTileEntity;
 
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.IInventory;
@@ -14,12 +15,13 @@ public class GuiArmorTableTileEntity  extends GuiContainer {
 	
 	private TileEntity tileEntity;
 	private IInventory playerInv;
+	private GuiTextField text;
 	
 	public GuiArmorTableTileEntity(ContainerArmorTableTileEntity containerIn, TileEntity tileEntity, IInventory playerInv) {
 		super(containerIn);
 		
         this.xSize = 176;
-        this.ySize = 166;
+        this.ySize = 200;
         this.tileEntity = tileEntity;
         this.playerInv = playerInv;
     }
@@ -34,8 +36,9 @@ public class GuiArmorTableTileEntity  extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
     	String s = this.tileEntity.getDisplayName().getUnformattedText();
-        this.fontRendererObj.drawString(s, 88 - this.fontRendererObj.getStringWidth(s) / 2, 6, 4210752);            //#404040
-        this.fontRendererObj.drawString(this.playerInv.getDisplayName().getUnformattedText(), 8, 72, 4210752);      //#404040
+    	this.fontRendererObj.drawString(s, 88 - this.fontRendererObj.getStringWidth(s) / 2, -9, 16777215);;            //#404040
+    	String out = "Output";
+    	this.fontRendererObj.drawString(out, 100, 6, 4210752);           //#404040
     }
 
 }

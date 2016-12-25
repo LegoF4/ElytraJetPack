@@ -2,6 +2,13 @@ package com.LegoF4.ElytraJetPack.blocks;
 
 import com.LegoF4.ElytraJetPack.Main;
 import com.LegoF4.ElytraJetPack.gui.GuiHandler;
+import com.LegoF4.ElytraJetPack.items.ItemManager;
+import com.LegoF4.ElytraJetPack.items.JetpackAvionics;
+import com.LegoF4.ElytraJetPack.items.JetpackCore;
+import com.LegoF4.ElytraJetPack.items.JetpackEngine;
+import com.LegoF4.ElytraJetPack.items.JetpackModule;
+import com.LegoF4.ElytraJetPack.items.JetpackModuleFluid;
+import com.LegoF4.ElytraJetPack.items.PackArmor;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,11 +41,18 @@ public class ArmorTableTileEntity extends TileEntity  implements ITickable, IInv
 
 	    NBTTagList list = new NBTTagList();
 	    for (int i = 0; i < this.getSizeInventory(); ++i) {
-	        if (this.getStackInSlot(i) != null) {
+	    	if (this.getStackInSlot(i) != null) {
 	            NBTTagCompound stackTag = new NBTTagCompound();
-	            stackTag.setByte("Slot", (byte) i);
+	            stackTag.setInteger("Slot", i);
 	            this.getStackInSlot(i).writeToNBT(stackTag);
+	            stackTag.setBoolean("Nulled", false);
 	            list.appendTag(stackTag);
+	        }
+	        else {
+	        	NBTTagCompound stackTag = new NBTTagCompound();
+	        	stackTag.setInteger("Slot", i);
+	        	stackTag.setBoolean("Nulled", true);
+	        	list.appendTag(stackTag);
 	        }
 	    }
 	    nbt.setTag("Items", list);
@@ -54,11 +68,22 @@ public class ArmorTableTileEntity extends TileEntity  implements ITickable, IInv
 	public void readFromNBT(NBTTagCompound nbt) {
 	    super.readFromNBT(nbt);
 
+	    for (int i = 0; i < this.getSizeInventory(); ++i) {
+	    	this.inventory[i] = null;
+	    }
 	    NBTTagList list = nbt.getTagList("Items", 10);
 	    for (int i = 0; i < list.tagCount(); ++i) {
 	        NBTTagCompound stackTag = list.getCompoundTagAt(i);
-	        int slot = stackTag.getByte("Slot") & 255;
-	        this.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
+	        int slot = stackTag.getInteger("Slot");
+	        if (!stackTag.getBoolean("Nulled")) {
+	        	this.inventory[slot] = ItemStack.loadItemStackFromNBT(stackTag);
+		        this.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(stackTag));
+	        }
+	        else {
+	        	this.inventory[slot] = null;
+		        this.setInventorySlotContents(slot, null);
+	        }
+	        
 	    }
 
 	    if (nbt.hasKey("CustomName", 8)) {
@@ -91,7 +116,7 @@ public class ArmorTableTileEntity extends TileEntity  implements ITickable, IInv
     
     @Override
     public int getSizeInventory() {
-        return 9;
+        return 15;
     }
     
     @Override
@@ -178,7 +203,17 @@ public class ArmorTableTileEntity extends TileEntity  implements ITickable, IInv
     
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return true;
+    	if (stack.getItem() instanceof PackArmor && index == 0)
+    		return true;
+    	if (index == 6 && stack.getItem() instanceof JetpackCore)
+    		return true;
+    	if (index == 1 && stack.getItem() instanceof JetpackAvionics)
+    		return true;
+    	if (index == 12 && stack.getItem() instanceof JetpackEngine)
+    		return true;
+    	if (index > 1 && index < 11 && index != 6 && stack.getItem() instanceof JetpackModule)
+    		return true;
+        return false;
     }
     
     @Override
@@ -201,9 +236,103 @@ public class ArmorTableTileEntity extends TileEntity  implements ITickable, IInv
 	
 	@Override
     public void update() {
-		//Server Side Only Code
-		if (!this.worldObj.isRemote) {
-			
+		
+		if (this.inventory[6] != null) {
+			if (this.inventory[6].getItem() instanceof JetpackCore) {
+				ItemStack stack = new ItemStack(ItemManager.PackCompound, 1);
+				NBTTagCompound nbt = new NBTTagCompound();
+				nbt.setInteger("Tier", this.inventory[6].getTagCompound().getInteger("Tier"));
+				nbt.setInteger("MaxModules",  this.inventory[6].getTagCompound().getInteger("MaxModules"));
+				nbt.setInteger("EnergyStored", 0);
+				int tier = nbt.getInteger("Tier");
+				float drag =  this.inventory[6].getTagCompound().getFloat("Drag");
+				int weight =  this.inventory[6].getTagCompound().getInteger("Weight");
+				int avionicsInt = 0;
+				int modules = 0;
+				int maxmodules = this.inventory[6].getTagCompound().getInteger("MaxModules");
+				NBTTagList list = new NBTTagList();
+				if (this.inventory[1] != null) {
+					if (this.inventory[1].getItem() instanceof JetpackAvionics) {
+						avionicsInt = this.inventory[1].getTagCompound().getInteger("Tier");
+						if (avionicsInt > tier)
+							avionicsInt = tier;
+						weight += this.inventory[1].getTagCompound().getInteger("Weight");
+						
+						NBTTagCompound avionics = new NBTTagCompound();
+						avionics.setString("Type", "Av");
+						avionics.setInteger("Tier", tier);
+						avionics.setInteger("Slot", avionicsInt);
+						list.appendTag(avionics);
+					}
+					else {
+						NBTTagCompound avionics = new NBTTagCompound();
+						avionics.setString("Type", "Null");
+						list.appendTag(avionics);
+					}
+				}
+				else {
+					NBTTagCompound avionics = new NBTTagCompound();
+					avionics.setString("Type", "Null");
+					list.appendTag(avionics);
+				}
+				nbt.setInteger("Avionics", avionicsInt);
+				int energyCap = 0;
+				int fluidCap = 0;
+				int fluidI = 0;
+				int fluidO = 0;
+				int energyIO = 0;
+				int rfDrain = 0;
+				int fDrain = 0;
+				for (int i = 2; i < 11; i++) {
+					if (i != 6) {
+						if (this.inventory[i] != null) {
+							if (this.inventory[i].getItem() instanceof JetpackModule) {
+								modules++;
+								NBTTagCompound nbtI = this.inventory[i].getTagCompound();
+								if (this.inventory[i].getItem() instanceof JetpackModuleFluid && nbtI.getString("Type").charAt(0) == 'T') {
+									fluidCap += nbtI.getInteger("Storage");
+									fluidI += nbtI.getInteger("Input");
+									fluidO += nbtI.getInteger("Output");
+									fDrain += nbtI.getInteger("Drain");
+								}
+								NBTTagCompound mod1 = new NBTTagCompound();
+								mod1.setString("Type", "Mod");
+								mod1.setString("Module", nbtI.getString("Type"));
+								mod1.setInteger("Slot", i);
+								list.appendTag(mod1);
+							}
+						}
+						
+					}
+				}
+				if (this.inventory[12] != null) {
+					if (this.inventory[12].getItem() instanceof JetpackEngine) {
+						weight += this.inventory[12].getTagCompound().getInteger("Weight");
+					}
+				}
+				nbt.setInteger("CapFluid", fluidCap);
+				nbt.setInteger("FluidIO", fluidI);
+				nbt.setInteger("FuelDrain", fDrain);
+				nbt.setInteger("CapEnergy", energyCap);
+				nbt.setInteger("EnergyStored", 0);
+				nbt.setInteger("EnergyIO", energyIO);
+				nbt.setInteger("EnergyDrain", rfDrain);
+				nbt.setTag("Modules", list);
+				stack.setTagCompound(nbt);
+				this.setInventorySlotContents(14, stack);
+			}
+		}
+		if (this.inventory[0] != null) {
+			boolean empty = true;
+			for (int i = 1; i < 13; i++) {
+				if (this.inventory[i] != null) {
+					empty = false;
+				}
+			}
+			if (empty) {
+				ItemStack inputStack = this.inventory[0];
+				NBTTagCompound nbtIn = inputStack.getTagCompound().getCompoundTag("Modules");
+			}
 		}
 	}
 }

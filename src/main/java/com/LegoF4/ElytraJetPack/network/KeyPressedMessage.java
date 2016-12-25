@@ -93,6 +93,7 @@ public class KeyPressedMessage extends AbstractServerMessage<KeyPressedMessage>{
 							
 						}
 				}
+				
 				//Thrust
 				if (keyNumb == 2 && jetFlying.isJetFlying()) {
 					if(!player.isInLava()) {;
